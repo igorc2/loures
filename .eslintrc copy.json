@@ -1,0 +1,185 @@
+
+{
+  "extends": [
+    "plugin:react/jsx-runtime",
+    "plugin:@next/next/recommended",
+    "plugin:jest-dom/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "@typescript-eslint/tslint"
+  ],
+  "root": true,
+  "rules": {
+    "no-unused-vars": ["warn", { "varsIgnorePattern": "^_.*" }],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "ImportDeclaration[source.value=/lodash$/i]",
+        "message": "do not import all of lodash, just import the module you need... and preferably wrap it."
+      },
+      {
+        "selector": "ImportDeclaration[source.value=/^next.navigation$/i]",
+        "message": "Do not import this directly, use @lib/next/navigation"
+      }
+    ],
+    "@typescript-eslint/consistent-type-assertions": "error",
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "none",
+          "requireLast": true
+        },
+        "singleline": {
+          "delimiter": "comma",
+          "requireLast": false
+        }
+      }
+    ],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "variable",
+        "format": [
+          "camelCase",
+          "UPPER_CASE",
+          "PascalCase"
+        ],
+        "leadingUnderscore": "allow",
+        "trailingUnderscore": "forbid"
+      }
+    ],
+    "@typescript-eslint/no-empty-function": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-inferrable-types": "error",
+    "@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
+    "@typescript-eslint/quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "@typescript-eslint/restrict-plus-operands": "error",
+    "@typescript-eslint/semi": [
+      "error",
+      "never"
+    ],
+    "@typescript-eslint/strict-boolean-expressions": [
+      "error"
+    ],
+    "arrow-parens": [
+      "error",
+      "always"
+    ],
+    "brace-style": [
+      "error",
+      "1tbs"
+    ],
+    "default-case": "error",
+    "eqeqeq": [
+      "error",
+      "always"
+    ],
+    "id-denylist": [
+      "error",
+      "any",
+      "Number",
+      "number",
+      "String",
+      "string",
+      "Boolean",
+      "boolean",
+      "Undefined",
+      "undefined"
+    ],
+    "id-match": "error",
+    "indent": "off",
+    "new-parens": "error",
+    "no-cond-assign": "error",
+    "no-console": "error",
+    "no-debugger": "error",
+    "no-empty": "error",
+    "no-empty-function": "off",
+    "no-eval": "error",
+    "no-redeclare": "off",
+    "@typescript-eslint/no-redeclare": "error",
+    "no-trailing-spaces": "error",
+    "no-underscore-dangle": "off",
+    "no-var": "error",
+    "prefer-const": "error",
+    "quotes": "off",
+    "semi": "off",
+    "use-isnan": "error",
+    "@typescript-eslint/tslint/config": [
+      "error",
+      {
+        "rules": {
+          "ban": [
+            true,
+            {
+              "name": "dangerouslyMergeProps",
+              "message": "This function is not type safe and should only be used in HOCs"
+            },
+            {
+              "name": [
+                "storybook",
+                "useState"
+              ],
+              "message": "This function will waste your time if you accidentally import it instead of React.useState"
+            },
+            {
+              "name": [
+                "*",
+                "toLocaleLowerCase"
+              ],
+              "message": "This method expects language codes that do not correspond to our language codes. Use the toLocaleLowerCase helper instead."
+            },
+            {
+              "name": [
+                "R",
+                "path"
+              ],
+              "message": "This function is not type safe; see common/helpers/safeNavigation"
+            },
+            {
+              "name": "dangerouslyInitializeApolloClient",
+              "message": "This function mutates global state and should not be used."
+            },
+            {
+              "name": "dangerouslyInvokeChangeHandler",
+              "message": "This function casts its argument to any and should not be used."
+            },
+            {
+              "name": "_dangerouslyAngularizeNashtechComponent",
+              "message": "This function captures a bad practice. Use `angularize` instead."
+            }
+          ],
+          "encoding": true,
+          "import-spacing": true,
+          "no-unnecessary-callback-wrapper": true,
+          "number-literal-format": true,
+          "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-module",
+            "check-separator",
+            "check-type"
+          ]
+        }
+      }
+    ]
+  }
+}
