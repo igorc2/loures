@@ -20,17 +20,30 @@ import { cn } from '@/lib/utils'
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { Calendar } from '../ui/calendar'
+import { BiPencil } from 'react-icons/bi'
 
-interface CreateTaskProps {
+interface EditTaskProps {
+  id: number
   projectId: number
+  name: string
+  description?: string
+  finishDate?: Date
 }
 
-export function CreateTask({ projectId }: CreateTaskProps) {
+export function EditTask({
+  id,
+  projectId,
+  name,
+  description,
+  finishDate,
+}: EditTaskProps) {
   const router = useRouter()
   const { setProjects, projects } = useProjects()
-  const [newTaskName, setNewTaskName] = useState('')
-  const [description, setDescription] = useState('')
-  const [finishDate, setFinishDate] = useState<Date>()
+  const [newTaskName, setNewTaskName] = useState(name)
+  const [newDescription, setNewDescription] = useState(description)
+  const [newFinishDate, setNewFinishDate] = useState<Date | undefined>(
+    finishDate ? new Date(finishDate) : undefined
+  )
 
   const handleCancel = () => {
     resetForm()
@@ -38,8 +51,8 @@ export function CreateTask({ projectId }: CreateTaskProps) {
 
   const resetForm = () => {
     setNewTaskName('')
-    setDescription('')
-    setFinishDate(undefined)
+    setNewDescription('')
+    setNewFinishDate(undefined)
   }
 
   const handleAddTask = () => {
@@ -48,9 +61,14 @@ export function CreateTask({ projectId }: CreateTaskProps) {
       router.push('/')
     } else {
       axios
-        .post(
-          'http://localhost:3700/tasks',
-          { name: newTaskName, description, finishDate, projectId },
+        .put(
+          `http://localhost:3700/tasks/${id}`,
+          {
+            name: newTaskName,
+            description: newDescription,
+            finishDate: newFinishDate,
+            projectId,
+          },
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -61,31 +79,30 @@ export function CreateTask({ projectId }: CreateTaskProps) {
           setProjects(
             projects.map((project) => {
               if (project.id === projectId) {
-                if (!project.tasks) {
-                  project.tasks = []
+                return {
+                  ...project,
+                  tasks: project.tasks.map((task) => {
+                    if (task.id === id) {
+                      return response.data
+                    }
+                    return task
+                  }),
                 }
-                project.tasks.push(response.data)
               }
               return project
             })
           )
-          resetForm()
         })
     }
   }
 
   return (
     <>
-      <Input
-        name="newTask"
-        value={newTaskName}
-        type="text"
-        placeholder="Add a task"
-        onChange={(e) => setNewTaskName(e.target.value)}
-      />
       <Dialog>
         <DialogTrigger>
-          <Button>Add</Button>
+          <div className="cursor-pointer">
+            <BiPencil />
+          </div>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader className="mb-6">
@@ -102,7 +119,7 @@ export function CreateTask({ projectId }: CreateTaskProps) {
             placeholder="Add a description"
             value={description}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setDescription(e.target?.value)
+              setNewDescription(e.target?.value)
             }
           />
 
@@ -112,12 +129,12 @@ export function CreateTask({ projectId }: CreateTaskProps) {
                 variant={'outline'}
                 className={cn(
                   'w-[280px] justify-start text-left font-normal',
-                  !finishDate && 'text-muted-foreground'
+                  !newFinishDate && 'text-muted-foreground'
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {finishDate ? (
-                  format(finishDate, 'PPP')
+                {newFinishDate ? (
+                  format(newFinishDate, 'PPP')
                 ) : (
                   <span>Finish date</span>
                 )}
@@ -126,8 +143,8 @@ export function CreateTask({ projectId }: CreateTaskProps) {
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={finishDate}
-                onSelect={setFinishDate}
+                selected={newFinishDate}
+                onSelect={setNewFinishDate}
                 initialFocus
               />
             </PopoverContent>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import axios from 'axios'
 import { Project } from './project'
 import { useProjects } from './projects-context'
@@ -37,6 +37,11 @@ export function ProjectsList() {
         })
         .then((response) => {
           setProjects(response.data)
+        })
+        .catch((error) => {
+          if (error.response.status === 401) {
+            router.push('/')
+          }
         })
     }
   }, [])

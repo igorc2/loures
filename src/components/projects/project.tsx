@@ -14,10 +14,14 @@ import { Task } from '../tasks/task'
 import { useState } from 'react'
 import { useProjects } from './projects-context'
 import { CreateTask } from '../tasks/create-task'
+import { Edit } from 'lucide-react'
+import { EditProject } from './edit-project'
 
 interface Tasks {
   id: number
   name: string
+  finishDate?: Date
+  description?: string
   statusId: number
 }
 
@@ -25,6 +29,11 @@ interface ProjectProps {
   id: number
   name: string
   tasks: Tasks[]
+}
+
+export const EStatusCode = {
+  TODO: 1,
+  DONE: 2,
 }
 
 export function Project({ id, name, tasks }: ProjectProps) {
@@ -48,34 +57,51 @@ export function Project({ id, name, tasks }: ProjectProps) {
       })
   }
 
+  const todoTasks = tasks
+    ? tasks.filter((task) => task.statusId === EStatusCode.TODO)
+    : []
+  const doneTasks = tasks
+    ? tasks.filter((task) => task.statusId === EStatusCode.DONE)
+    : []
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="border-b border-slate-200">
         <CardTitle>{name}</CardTitle>
-        <CardHeaderControl>
-          <div className="cursor-pointer">
-            <BiPencil onClick={() => console.log('Edit project')} />
-          </div>
+        <CardHeaderControl className="ml-3">
+          <EditProject projectId={id} projectName={name} />
           <div className="cursor-pointer">
             <BiTrash onClick={handleDeleteProject} />
           </div>
         </CardHeaderControl>
       </CardHeader>
-      <CardContent>
-        {tasks &&
-          tasks.map((task) => (
-            <Task key={task.id} name={task.name} statusId={task.statusId} />
+      <CardContent className="pt-6">
+        <div className="text-l text-gray-900 mb-2">To do</div>
+        {todoTasks &&
+          todoTasks.map((task) => (
+            <Task
+              id={task.id}
+              key={task.id}
+              name={task.name}
+              finishDate={task?.finishDate}
+              projectId={id}
+              statusId={task.statusId}
+            />
+          ))}
+        <div className="text-l text-gray-900 mb-2">Done</div>
+        {doneTasks &&
+          doneTasks.map((task) => (
+            <Task
+              id={task.id}
+              key={task.id}
+              name={task.name}
+              finishDate={task?.finishDate}
+              projectId={id}
+              statusId={task.statusId}
+            />
           ))}
       </CardContent>
-      <CardFooter>
-        {/* <Input
-          name="newTask"
-          value={newTaskName}
-          type="text"
-          placeholder="Add a task"
-          onChange={(e) => setNewTaskName(e.target.value)}
-        />
-        <Button onClick={handleAddTask}>Add</Button> */}
+      <CardFooter className="border-t border-slate-200 pt-6">
         <CreateTask projectId={id} />
       </CardFooter>
     </Card>

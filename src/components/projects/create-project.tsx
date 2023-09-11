@@ -39,7 +39,7 @@ export function CreateProject() {
           placeholder="Project name"
           onChange={(e) => setNewProjectName(e.target.value)}
         />
-        <Button className="mt-8 center" onClick={handleAddProject}>
+        <Button className="mt-8 center w-full" onClick={handleAddProject}>
           Create Project
         </Button>
       </CardContent>
